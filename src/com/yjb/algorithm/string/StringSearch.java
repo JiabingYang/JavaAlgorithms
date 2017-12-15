@@ -43,6 +43,7 @@ public class StringSearch {
     }
 
     public static int[] getNextArray(char[] p) {
+        // next[j] = k 代表p[j] 之前的模式串子串中，有长度为k 的相同前缀和后缀
         int[] next = new int[p.length];
         int j = 0;
         int k = -1;
@@ -51,7 +52,10 @@ public class StringSearch {
             if (k == -1 || p[j] == p[k]) {
                 ++k;
                 ++j;
-//                next[j] = k;
+//                next[j] = k; // 未优化
+                // 优化：
+                // 如果p[j] = p[next[j]]，必然导致后一步(j取next[j])匹配失败（当前p[j]!=p[i] => p[next[j]]!=p[i]）。
+                // 所以不能允许p[j] = p[ next[j]]
                 next[j] = (p[j] != p[k]) ? k : next[k];
                 continue;
             }
