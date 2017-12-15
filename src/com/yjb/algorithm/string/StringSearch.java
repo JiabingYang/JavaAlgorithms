@@ -28,7 +28,6 @@ public class StringSearch {
     }
 
     public static int kmp(char[] s, char[] p) {
-
         int i = 0;
         int j = 0;
         int[] next = getNextArray(p);

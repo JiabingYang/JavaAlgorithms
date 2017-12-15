@@ -5,7 +5,8 @@ import java.util.Arrays;
 public class Sort {
 
     public static void main(String[] args) {
-        int[] a = {34, 8, 64, 51, 32, 21};
+//        int[] a = {34, 8, 64, 51, 32, 21};
+        int[] a = {2, 1};
         System.out.println(Arrays.toString(a));
         quickSort(a);
         System.out.println(Arrays.toString(a));
@@ -177,7 +178,7 @@ public class Sort {
         int pivot = median3(a, left, right);
         int i = left;
         int j = right - 1;
-        while (true) {
+        while (i < j) { // i和j交错
             while (a[++i] < pivot) { // 右移i
             }
             while (a[--j] > pivot) { // 左移j
@@ -185,8 +186,6 @@ public class Sort {
             // 此时i >= pivot, j <= pivot
             if (i < j) {
                 swap(a, i, j);
-            } else { // i和j交错
-                break;
             }
         }
         // 此时 i和j交错或重合， <i的元素必然小于pivot，>i的元素必然大于pivot
@@ -218,5 +217,36 @@ public class Sort {
         int temp = a[pos1];
         a[pos1] = a[pos2];
         a[pos2] = temp;
+    }
+
+    // ----------------------- 快速选择(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
+    public int quickSelect(int[] a, int k) {
+        return qSelect(a, k, 0, a.length - 1);
+    }
+
+    private int qSelect(int[] a, int k, int left, int right) {
+        if (left >= right) {
+            return a[k - 1];
+        }
+        int pivot = median3(a, left, right);
+        int i = left;
+        int j = right - 1;
+        while (i < j) { // i和j交错
+            while (a[++i] < pivot) { // 右移i
+            }
+            while (a[--j] > pivot) { // 左移j
+            }
+            // 此时i >= pivot, j <= pivot
+            if (i < j) {
+                swap(a, i, j);
+            }
+        }
+        // 此时 i和j交错或重合， <i的元素必然小于pivot，>i的元素必然大于pivot
+        swap(a, i, right - 1);
+        if (k <= i) {
+            return qSelect(a, k, left, i - 1);
+        } else {
+            return qSelect(a, k, i + 1, right);
+        }
     }
 }
