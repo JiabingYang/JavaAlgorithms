@@ -14,13 +14,13 @@ public class Fibonocci {
     }
 
     private static int fib(int n) {
-        if (n <= 1) {
+        if (n < 2) {
             return 1;
         }
-        int last = 2;
+        int last = 1;
         int nextToLast = 1;
-        int result = 2;
-        for (int i = 2; i < n; i++) {
+        int result = 0;
+        for (int i = 2; i <= n; i++) {
             result = last + nextToLast;
             nextToLast = last;
             last = result;
