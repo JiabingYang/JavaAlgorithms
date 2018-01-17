@@ -1,15 +1,14 @@
 package com.yjb.algorithm.sort;
 
-import java.util.Arrays;
-
 public class Sort {
 
     public static void main(String[] args) {
 //        int[] a = {34, 8, 64, 51, 32, 21};
         int[] a = {2, 1};
-        System.out.println(Arrays.toString(a));
-        quickSort(a);
-        System.out.println(Arrays.toString(a));
+        System.out.println(quickSelect(a, 2));
+//        System.out.println(Arrays.toString(a));
+//        quickSort(a);
+//        System.out.println(Arrays.toString(a));
     }
 
     // ----------------------- 冒泡排序 -----------------------
@@ -220,14 +219,11 @@ public class Sort {
     }
 
     // ----------------------- 快速选择(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
-    public int quickSelect(int[] a, int k) {
+    public static int quickSelect(int[] a, int k) {
         return qSelect(a, k, 0, a.length - 1);
     }
 
-    private int qSelect(int[] a, int k, int left, int right) {
-        if (left >= right) {
-            return a[k - 1];
-        }
+    private static int qSelect(int[] a, int k, int left, int right) {
         int pivot = median3(a, left, right);
         int i = left;
         int j = right - 1;
@@ -245,8 +241,10 @@ public class Sort {
         swap(a, i, right - 1);
         if (k <= i) {
             return qSelect(a, k, left, i - 1);
-        } else {
+        } else if (k > i + 1) {
             return qSelect(a, k, i + 1, right);
+        } else {
+            return a[i];
         }
     }
 }
