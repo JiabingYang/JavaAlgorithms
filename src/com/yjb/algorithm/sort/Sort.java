@@ -175,6 +175,8 @@ public class Sort {
             return;
         }
         int pivot = median3(a, left, right);
+        // 注意下面不能写成i = left + 1; j = right -2; (a[i++] < pivot) (a[j--] > pivot)
+        // 否则在a[i] == a[j] == pivot时会产生无限循环
         int i = left;
         int j = right - 1;
         while (i < j) { // i和j交错
