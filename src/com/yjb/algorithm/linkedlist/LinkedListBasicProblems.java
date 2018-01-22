@@ -229,7 +229,7 @@ public class LinkedListBasicProblems {
             return head1;
         }
 
-        Node head = null;
+        Node head;
         if (head1.data < head2.data) {
             head = head1;
             head.next = mergeSortedLinkedlist2(head1.next, head2);
@@ -502,28 +502,6 @@ public class LinkedListBasicProblems {
 
     // ----------------------- 11. 反转链表 -----------------------
 
-    public static void main(String[] args) {
-        Node head = new Node(1);
-        Node temp = new Node(2);
-        head.next = temp;
-        temp = new Node(3);
-        head.next.next = temp;
-        temp = new Node(4);
-        head.next.next.next = temp;
-        Node p = head;
-        while (p != null) {
-            System.out.print(p.data + ", ");
-            p = p.next;
-        }
-        System.out.println();
-        head = reverse2(head);
-        p = head;
-        while (p != null) {
-            System.out.print(p.data + ", ");
-            p = p.next;
-        }
-    }
-
     /**
      * 非递归
      */
@@ -682,14 +660,16 @@ public class LinkedListBasicProblems {
      * 我们考虑最后一个元素是第一层，然后逐级返回，当返回到第N+1层（也就是父亲节点所在层数）就开始删除操作。
      */
     private static Node removeNthFromEnd3(Node head, int n) {
-        Node newhead = new Node(-1);
-        newhead.next = head;
-        removeNthFromEnd3Core(newhead, n);
-        return newhead.next;
+        Node newHead = new Node(-1);
+        newHead.next = head;
+        removeNthFromEnd3Core(newHead, n);
+        return newHead.next;
     }
 
     private static int removeNthFromEnd3Core(Node node, int n) {
-        if (node.next == null) return 1;
+        if (node.next == null) {
+            return 1;
+        }
         int level = removeNthFromEnd3Core(node.next, n) + 1; //层数+1
         if (level == n + 1)    //找到了父亲
             node.next = node.next.next;
