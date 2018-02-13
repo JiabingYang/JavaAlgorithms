@@ -415,6 +415,8 @@ public class LinkedListBasicProblems {
     /**
      * https://www.cnblogs.com/hiddenfox/p/3408931.html
      * <p>
+     * 上面链接中关于这道题的解释是错的，应该要推公式的。
+     * <p>
      * 当两个结点相遇的时候，将slow再重新指向head，slow和fast一起以slow的速度往后移动，
      * 当再次相遇的时候，该结点就是环的起点。
      *
@@ -660,10 +662,10 @@ public class LinkedListBasicProblems {
      * 我们考虑最后一个元素是第一层，然后逐级返回，当返回到第N+1层（也就是父亲节点所在层数）就开始删除操作。
      */
     private static Node removeNthFromEnd3(Node head, int n) {
-        Node newHead = new Node(-1);
-        newHead.next = head;
-        removeNthFromEnd3Core(newHead, n);
-        return newHead.next;
+        Node dummy = new Node(-1);
+        dummy.next = head;
+        removeNthFromEnd3Core(dummy, n);
+        return dummy.next;
     }
 
     private static int removeNthFromEnd3Core(Node node, int n) {
