@@ -480,26 +480,35 @@ public class LinkedListBasicProblems {
     /**
      * 思想：对于单链表，可以将n3复制到n2，然后删除n3即可。
      * 这样的方法在java中，如果是删除链表最后一个元素，仍然需要找前面的元素。
+     * <p>
+     * Note:
+     * 1. 这个方法和文本上的不一样，书上的没有返回值，这个因为JAVA引用传递的原因，
+     * 如果删除的结点是头结点，如果不采用返回值的方式，那么头结点永远删除不了
+     * 2. 输入的待删除结点必须是待链表中的结点，否则会引起错误，这个条件由用户进行保证
      *
-     * @param head         待删除的链表
-     * @param nodeToDelete 待删除结点
+     * @param head        链表的表头
+     * @param toBeDeleted 待删除的结点
+     * @return 删除后的头结点
      */
-    private static void deleteNode(Node head, Node nodeToDelete) {
-        if (head == null || nodeToDelete == null) {
-            return;
+    private static Node deleteNode(Node head, Node toBeDeleted) {
+        if (head == null || toBeDeleted == null) {
+            return head;
         }
-
-        // 如果nodeToDelete是最后一个结点，或链表只有1个结点。则直接置为null，倒数第2个结点的next就指向了null
-        if (nodeToDelete.next != null) {
-            nodeToDelete.data = nodeToDelete.next.data;
-            nodeToDelete.next = nodeToDelete.next.next;
-        } else { //删除链表最后一个结点
-            Node pre = head;
-            while (pre.next != nodeToDelete) {
-                pre = pre.next;
-            }
-            pre.next = null;
+        if (toBeDeleted == head) {
+            return head.next;
         }
+        Node next = toBeDeleted.next;
+        if (next != null) {
+            toBeDeleted.data = next.data;
+            toBeDeleted.next = next.next;
+            return head;
+        }
+        Node p = head;
+        while (p.next != toBeDeleted) {
+            p = p.next;
+        }
+        p.next = null;
+        return head;
     }
 
     // ----------------------- 11. 反转链表 -----------------------
