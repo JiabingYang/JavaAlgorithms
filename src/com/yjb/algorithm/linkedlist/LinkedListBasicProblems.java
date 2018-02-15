@@ -702,11 +702,11 @@ public class LinkedListBasicProblems {
                 pre = pre.next;
                 continue;
             }
-            Node p1 = p.next;
-            while (p1 != null && p1.data == p.data) {
-                p1 = p1.next;
-            }
-            pre.next = p1;
+            int val = p.data;
+            do {
+                p = p.next;
+            } while (p != null && p.data == val);
+            pre.next = p;
         }
         return dummy.next;
     }
