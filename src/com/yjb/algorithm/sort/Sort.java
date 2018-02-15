@@ -1,18 +1,20 @@
 package com.yjb.algorithm.sort;
 
+import java.util.Arrays;
+
 public class Sort {
 
     public static void main(String[] args) {
-//        int[] a = {34, 8, 64, 51, 32, 21};
-        int[] a = {2, 1};
-        System.out.println(quickSelect(a, 2));
+        int[] a = {34, 8, 64, 51, 32, 21};
+//        int[] a = {2, 1};
+//        System.out.println(quickSelect(a, 2));
 //        System.out.println(Arrays.toString(a));
-//        quickSort(a);
-//        System.out.println(Arrays.toString(a));
+        selectionSort(a);
+        System.out.println(Arrays.toString(a));
     }
 
     // ----------------------- 冒泡排序 -----------------------
-    public static void bubbleSort1(int[] a) {
+    private static void bubbleSort1(int[] a) {
         for (int i = 0; i < a.length; i++) {
             for (int j = 1; j < a.length - i; j++) {
                 if (a[j] < a[j - 1]) {
@@ -24,7 +26,7 @@ public class Sort {
         }
     }
 
-    public static void bubbleSort2(int[] a) {
+    private static void bubbleSort2(int[] a) {
         boolean changed;
         do {
             changed = false;
@@ -39,7 +41,7 @@ public class Sort {
         } while (changed);
     }
 
-    public static void bubbleSort3(int[] a) {
+    private static void bubbleSort3(int[] a) {
         boolean changed = true;
         for (int i = 0; i < a.length && changed; i++) {
             changed = false;
@@ -53,9 +55,28 @@ public class Sort {
             }
         }
     }
+    
+    // ----------------------- 选择排序 -----------------------
+    private static void selectionSort(int[] a){
+        for (int i = 0; i < a.length - 1; i++) {
+            int min = a[i];
+            int minIndex = i;
+            for (int j = i + 1; j < a.length; j++) {
+                if (a[j] < min) {
+                    min = a[j];
+                    minIndex = j;
+                }
+            }
+            if (minIndex != i) {
+                int temp = a[i];
+                a[i] = a[minIndex];
+                a[minIndex] = temp;
+            }
+        }
+    }
 
     // ----------------------- 插入排序 -----------------------
-    public static void insertionSort(int[] a) {
+    private static void insertionSort(int[] a) {
         // increment = 1
         // 增量为1的插入排序
         for (int i = 1; i < a.length; i++) {
@@ -69,7 +90,7 @@ public class Sort {
     }
 
     // ----------------------- 希尔排序 -----------------------
-    public static void shellSort(int[] a) {
+    private static void shellSort(int[] a) {
         for (int increment = a.length / 2; increment > 0; increment /= 2) {
             // increment = a.length / 2, a.length / 4, a.length / 8, ...
             // 增量为increment的插入排序
@@ -85,7 +106,7 @@ public class Sort {
     }
 
     // ----------------------- 堆排序 -----------------------
-    public static void heapSort(int[] a) {
+    private static void heapSort(int[] a) {
         // 创建最大堆，堆元素从数组位置0开始
         for (int i = a.length / 2; i >= 0; i--) {
             percDown(a, i, a.length);
@@ -124,7 +145,7 @@ public class Sort {
     }
 
     // ----------------------- 归并排序 -----------------------
-    public static void mergeSort(int[] a) {
+    private static void mergeSort(int[] a) {
         mSort(a, new int[a.length], 0, a.length - 1);
     }
 
@@ -166,7 +187,7 @@ public class Sort {
     }
 
     // ----------------------- 快速排序(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
-    public static void quickSort(int[] a) {
+    private static void quickSort(int[] a) {
         qSort(a, 0, a.length - 1);
     }
 
@@ -221,7 +242,7 @@ public class Sort {
     }
 
     // ----------------------- 快速选择(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
-    public static int quickSelect(int[] a, int k) {
+    private static int quickSelect(int[] a, int k) {
         return qSelect(a, k, 0, a.length - 1);
     }
 
