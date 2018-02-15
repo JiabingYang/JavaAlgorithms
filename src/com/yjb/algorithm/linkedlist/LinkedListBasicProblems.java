@@ -13,19 +13,21 @@ import java.util.Stack;
  * 1. 单链表倒序输出
  * 2. 查找单链表倒数第k个元素
  * 3. 获取单链表的中间元素
- * 4. 两个有序单链表合并
+ * 4. 两个有序单链表合并(剑指offer：No25MergeSortedLists)
  * 5. 判断两个单链表是否相交
  * 6. 获取两个单链表相交的结点
  * 7. 判断单链表是否有环
  * 8. 判断有环单链表中环的长度
- * 9. 获取单链表中，环的起始结点
- * 10. 删除单链表中指定结点
- * 11. 反转链表
+ * 9. 获取单链表中，环的起始结点(剑指offer：No23EntryNodeInListLoop)
+ * 10. 删除单链表中指定结点(剑指offer: No18aDeleteNodeInList)
+ * 11. 反转链表(剑指offer: No24ReverseList)
  * 12. 单链表归并排序
  * 13. 反序链表求和(LeetCode: 2. Add Two Numbers)
- * 14. 删除链表倒数第n个节点（LeetCode: 19. Remove Nth Node From End of List）
+ * 14. 删除链表倒数第n个节点(不考虑异常情况，LeetCode: 19. Remove Nth Node From End of List)
  * 15. 删除链表中重复的元素(剑指offer: No18bDeleteDuplicatedNode)
  * 16. 删除链表中重复的元素(重复元素只保留一个)
+ * 17. 删除链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd)
+ * 18. 删除链表倒数第n个节点(考虑异常情况)
  */
 public class LinkedListBasicProblems {
 
@@ -165,7 +167,7 @@ public class LinkedListBasicProblems {
         return pBack;
     }
 
-    /* ---------------- 4. 两个有序单链表合并 -------------- */
+    /* ---------------- 4. 两个有序单链表合并(剑指offer：No25MergeSortedLists) -------------- */
     // 两个单链表head1和head2都各自有序，要求将其合并，得到的结果依然有序。
     // 此问题仍然有两种实现：1、归并排序的思想合并； 2、递归合并
 
@@ -474,7 +476,7 @@ public class LinkedListBasicProblems {
         return null;
     }
 
-    /* ---------------- 10. 删除单链表中指定结点 -------------- */
+    /* ---------------- 10. 删除单链表中指定结点(剑指offer: No18aDeleteNodeInList) -------------- */
     // 这个问题有个特殊要求，就是要求时间复杂度O(1)
     // 常规的思路：对于这样一段链表：n0 -> n1 -> n2 -> n3 -> n4 如果要删除结点n2，可以让n1指向n3。
     // 然后释放n2。这样的话需要找到结点n1，时间复杂度为O(n)
@@ -513,7 +515,7 @@ public class LinkedListBasicProblems {
         return head;
     }
 
-    /* ---------------- 11. 反转链表 -------------- */
+    /* ---------------- 11. 反转链表(剑指offer: No24ReverseList) -------------- */
 
     /**
      * 非递归
@@ -534,13 +536,13 @@ public class LinkedListBasicProblems {
      * 递归
      */
     private static Node reverse2(Node head) {
-        if (head.next == null) {
+        if (head == null || head.next == null) { // 如果一开始输入的head不为null的话head == null不用检查
             return head;
         }
-        Node reverseNode = reverse2(head.next);
+        Node newHead = reverse2(head.next);
         head.next.next = head;
         head.next = null;
-        return reverseNode;
+        return newHead;
     }
 
     /* ---------------- 12. 单链表归并排序 -------------- */
@@ -585,7 +587,7 @@ public class LinkedListBasicProblems {
         return dummy.next;
     }
 
-    /* ---------------- 14. 删除链表倒数第n个节点（LeetCode: 19. Remove Nth Node From End of List） -------------- */
+    /* ---------------- 14. 删除链表倒数第n个节点(不考虑异常情况，Leetcode: 19. Remove Nth Node From End of List) -------------- */
 
     /**
      * https://www.programcreek.com/2014/05/leetcode-remove-nth-node-from-end-of-list-java/
@@ -650,8 +652,7 @@ public class LinkedListBasicProblems {
 
         //if remove the first node
         if (fast == null) {
-            head = head.next;
-            return head;
+            return head.next;
         }
 
         while (fast.next != null) {
@@ -724,6 +725,61 @@ public class LinkedListBasicProblems {
                 p = p.next;
             }
         }
+        return head;
+    }
+
+    /* ---------------- 17. 链表中倒数第k个结点(考虑异常情况，剑指offer: No22KthNodeFromEnd) -------------- */
+    private static Node findKthToTail(Node head, int k) {
+        if (head == null || k == 0) {
+            return null;
+        }
+        Node fast = head;
+        for (int i = 0; i < k - 1; i++) {
+            if (fast.next == null) {
+                return null;
+            }
+            fast = fast.next;
+        }
+        Node slow = head;
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+
+    /* ---------------- 18. 删除链表倒数第n个节点(考虑异常情况) -------------- */
+
+    /**
+     * 在removeNthFromEnd的基础上考虑了异常情况
+     */
+    private static Node removeNthFromEnd(Node head, int n) {
+        if (head == null) {
+            return null;
+        }
+
+        Node fast = head;
+        Node slow = head;
+
+        for (int i = 0; i < n; i++) {
+            if (fast == null) {
+                return head;
+            }
+            fast = fast.next;
+        }
+
+        //if remove the first node
+        if (fast == null) {
+            return head.next;
+        }
+
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+
+        slow.next = slow.next.next;
+
         return head;
     }
 }
