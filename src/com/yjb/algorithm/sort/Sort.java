@@ -55,9 +55,9 @@ public class Sort {
             }
         }
     }
-    
+
     // ----------------------- 选择排序 -----------------------
-    private static void selectionSort(int[] a){
+    private static void selectionSort(int[] a) {
         for (int i = 0; i < a.length - 1; i++) {
             int min = a[i];
             int minIndex = i;
@@ -186,7 +186,38 @@ public class Sort {
         }
     }
 
-    // ----------------------- 快速排序(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
+    // ----------------------- 快速排序(选择第一个元素为枢纽元，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
+    public static void quickSortBasic(int[] a) {
+        if (a.length > 0) {
+            qSortBasic(a, 0, a.length - 1);
+        }
+    }
+
+    private static void qSortBasic(int[] a, int left, int right) {
+        if (left < right) {
+            int pivotIndex = getPivotIndex(a, left, right); //将numbers数组进行一分为二
+            qSortBasic(a, left, pivotIndex - 1);   //对低字段表进行递归排序
+            qSortBasic(a, pivotIndex + 1, right); //对高字段表进行递归排序
+        }
+    }
+
+    private static int getPivotIndex(int[] a, int left, int right) {
+        int pivot = a[left]; //数组的第一个作为中轴
+        while (left < right) {
+            while (left < right && a[right] > pivot) {
+                right--;
+            }
+            a[left] = a[right];//比中轴小的记录移到低端
+            while (left < right && a[left] < pivot) {
+                left++;
+            }
+            a[right] = a[left]; //比中轴大的记录移到高端
+        }
+        a[left] = pivot; //中轴记录到尾
+        return left; // 返回中轴的位置
+    }
+
+    // ----------------------- 快速排序(三数中值分割法，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
     private static void quickSort(int[] a) {
         qSort(a, 0, a.length - 1);
     }
@@ -241,7 +272,7 @@ public class Sort {
         a[pos2] = temp;
     }
 
-    // ----------------------- 快速选择(不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
+    // ----------------------- 快速选择(三数中值分割法，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
     private static int quickSelect(int[] a, int k) {
         return qSelect(a, k, 0, a.length - 1);
     }
