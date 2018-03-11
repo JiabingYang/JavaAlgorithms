@@ -7,10 +7,10 @@ public class Sort {
     public static void main(String[] args) {
         int[] a = {34, 8, 64, 51, 32, 21};
 //        int[] a = {2, 1};
-//        System.out.println(quickSelect(a, 2));
+//        int[] a = {2};
+        System.out.println(quickSelectBasic(a, 2));
+//        quickSortBasic(a);
 //        System.out.println(Arrays.toString(a));
-        selectionSort(a);
-        System.out.println(Arrays.toString(a));
     }
 
     // ----------------------- 冒泡排序 -----------------------
@@ -82,7 +82,7 @@ public class Sort {
         for (int i = 1; i < a.length; i++) {
             int temp = a[i];
             int j;
-            for (j = i; j >= 1 && a[j - 1] > temp; j--) {
+            for (j = i; j > 0 && a[j - 1] > temp; j--) {
                 a[j] = a[j - 1];
             }
             a[j] = temp;
@@ -97,7 +97,7 @@ public class Sort {
             for (int i = increment; i < a.length; i++) { // increment, increment + 1, ..., a.length - 1
                 int temp = a[i];
                 int j;
-                for (j = i; j >= increment && a[j - increment] > temp; j -= increment) {
+                for (j = i; j > 0 && a[j - increment] > temp; j -= increment) {
                     a[j] = a[j - increment];
                 }
                 a[j] = temp;
@@ -126,22 +126,16 @@ public class Sort {
     private static void percDown(int[] a, int i, int n) {
         int child;
         int temp;
-        for (temp = a[i]; leftChild(i) < n; i = child) {
-            child = leftChild(i);
-            if (child != n - 1 && a[child + 1] > a[child]) {
+        for (temp = a[i]; (child = 2 * i + 1) < n; i = child) {
+            if (child + 1 < n && a[child + 1] > a[child]) {
                 child++;
             }
-            if (temp < a[child]) {
-                a[i] = a[child];
-            } else {
+            if (temp >= a[child]) {
                 break;
             }
+            a[i] = a[child];
         }
         a[i] = temp;
-    }
-
-    private static int leftChild(int i) {
-        return 2 * i + 1;
     }
 
     // ----------------------- 归并排序 -----------------------
@@ -149,72 +143,90 @@ public class Sort {
         mSort(a, new int[a.length], 0, a.length - 1);
     }
 
-    private static void mSort(int[] a, int[] tempArray, int left, int right) {
-        if (left < right) {
-            int center = (left + right) / 2;
-            mSort(a, tempArray, 0, center);
-            mSort(a, tempArray, center + 1, right);
-            merge(a, tempArray, left, center + 1, right);
+    private static void mSort(int[] a, int[] arr, int l, int r) {
+        if (l < r) {
+            int mid = (l + r) / 2;
+            mSort(a, arr, 0, mid);
+            mSort(a, arr, mid + 1, r);
+            merge(a, arr, l, mid + 1, r);
         }
     }
 
-    private static void merge(int[] a, int[] tempArray, int lPos, int rPos, int rEnd) {
-        int lEnd = rPos - 1;
-        int tempPos = lPos;
-        int numElements = rEnd - lPos + 1;
+    private static void merge(int[] a, int[] arr, int ls, int rs, int re) {
+        int le = rs - 1;
+        int n = re - ls + 1;
+        int p = ls;
 
         // main loop
-        while (lPos <= lEnd && rPos <= rEnd) {
-            if (a[lPos] <= a[rPos]) {
-                tempArray[tempPos++] = a[lPos++];
-            } else {
-                tempArray[tempPos++] = a[rPos++];
-            }
+        while (ls <= le && rs <= re) {
+            arr[p++] = a[ls] <= a[rs] ? a[ls++] : a[rs++];
         }
 
         // copy rest
-        while (lPos <= lEnd) {
-            tempArray[tempPos++] = a[lPos++];
+        while (ls <= le) {
+            arr[p++] = a[ls++];
         }
-        while (rPos <= rEnd) {
-            tempArray[tempPos++] = a[rPos++];
+        while (rs <= re) {
+            arr[p++] = a[rs++];
         }
 
-        // copy tempArray back to a
-        for (int i = 0; i < numElements; i++, rEnd--) {
-            a[rEnd] = tempArray[rEnd];
+        // copy arr back to a
+        for (int i = 0; i < n; i++, re--) {
+            a[re] = arr[re];
         }
     }
 
     // ----------------------- 快速排序(选择第一个元素为枢纽元，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
-    public static void quickSortBasic(int[] a) {
+    private static void quickSortBasic(int[] a) {
         if (a.length > 0) {
             qSortBasic(a, 0, a.length - 1);
         }
     }
 
-    private static void qSortBasic(int[] a, int left, int right) {
-        if (left < right) {
-            int pivotIndex = getPivotIndex(a, left, right); //将numbers数组进行一分为二
-            qSortBasic(a, left, pivotIndex - 1);   //对低字段表进行递归排序
-            qSortBasic(a, pivotIndex + 1, right); //对高字段表进行递归排序
+    private static void qSortBasic(int[] a, int l, int r) {
+        if (l < r) {
+            int pivotIndex = getPivotIndex(a, l, r); //将数组一分为二
+            qSortBasic(a, l, pivotIndex - 1);   //对低字段表进行递归排序
+            qSortBasic(a, pivotIndex + 1, r); //对高字段表进行递归排序
         }
     }
 
-    private static int getPivotIndex(int[] a, int left, int right) {
-        int pivot = a[left]; //数组的第一个作为中轴
-        while (left < right) {
-            while (left < right && a[right] > pivot) {
-                right--;
+    private static int getPivotIndex(int[] a, int l, int r) {
+        int pivot = a[l]; //数组的第一个作为中轴
+        while (l < r) {
+            while (l < r && a[r] >= pivot) {
+                r--;
             }
-            a[left] = a[right];//比中轴小的记录移到低端
-            while (left < right && a[left] < pivot) {
-                left++;
+            a[l] = a[r];//比中轴小的记录移到低端
+            while (l < r && a[l] <= pivot) {
+                l++;
             }
-            a[right] = a[left]; //比中轴大的记录移到高端
+            a[r] = a[l]; //比中轴大的记录移到高端
         }
-        a[left] = pivot; //中轴记录到尾
-        return left; // 返回中轴的位置
+        a[l] = pivot; //中轴记录到尾
+        return l; // 返回中轴的位置
+    }
+
+    // ----------------------- 快速选择(选择第一个元素为枢纽元，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
+    private static int quickSelectBasic(int[] a, int k) {
+        if (a.length > 0) {
+            return qSelectBasic(a, k,0, a.length - 1);
+        }
+        return -1;
+    }
+
+    private static int qSelectBasic(int[] a, int k, int l, int r) {
+        if (l < r) {
+            int pivotIndex = getPivotIndex(a, l, r); //将数组一分为二
+            if (k <= pivotIndex) {
+                return qSelect(a, k, l, pivotIndex - 1);
+            } else if (k > pivotIndex + 1) {
+                return qSelect(a, k, pivotIndex + 1, r);
+            } else {
+                return a[pivotIndex];
+            }
+        }
+        return -1;
     }
 
     // ----------------------- 快速排序(三数中值分割法，不带CUTOFF，子数组长度小于等于CUTOFF时转插入排序可以提高速度) -----------------------
