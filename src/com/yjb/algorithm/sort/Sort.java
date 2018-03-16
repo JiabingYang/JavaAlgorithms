@@ -219,9 +219,9 @@ public class Sort {
         if (l < r) {
             int pivotIndex = getPivotIndex(a, l, r); //将数组一分为二
             if (k <= pivotIndex) {
-                return qSelect(a, k, l, pivotIndex - 1);
+                return qSelectBasic(a, k, l, pivotIndex - 1);
             } else if (k > pivotIndex + 1) {
-                return qSelect(a, k, pivotIndex + 1, r);
+                return qSelectBasic(a, k, pivotIndex + 1, r);
             } else {
                 return a[pivotIndex];
             }

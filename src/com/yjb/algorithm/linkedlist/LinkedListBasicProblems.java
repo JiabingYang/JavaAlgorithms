@@ -26,7 +26,7 @@ import java.util.Stack;
  * 14. 删除链表倒数第n个节点(不考虑异常情况，LeetCode: 19. Remove Nth Node From End of List)
  * 15. 删除链表中重复的元素(剑指offer: No18bDeleteDuplicatedNode)
  * 16. 删除链表中重复的元素(重复元素只保留一个)
- * 17. 删除链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd)
+ * 17. 链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd)
  * 18. 删除链表倒数第n个节点(考虑异常情况)
  */
 public class LinkedListBasicProblems {
