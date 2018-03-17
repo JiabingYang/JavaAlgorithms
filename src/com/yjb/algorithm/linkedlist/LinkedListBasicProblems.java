@@ -282,7 +282,7 @@ public class LinkedListBasicProblems {
      * @param head2 链表2
      * @return Node 返回两个链表相交的结点。若没有相交，则返回null
      */
-    public static Node getCommonNode(Node head1, Node head2) {
+    public static Node getCommonNode1(Node head1, Node head2) {
         if (head1 == null || head2 == null) {
             return null;
         }
@@ -332,6 +332,25 @@ public class LinkedListBasicProblems {
         }
 
         return pFront;
+    }
+
+
+    /**
+     * https://github.com/CyC2018/InnterviewNotes/blob/master/notes/剑指%20offer%20题解.md
+     * <p>
+     * 设 A 的长度为 a + c，B 的长度为 b + c，其中 c 为尾部公共部分长度，可知 a + c + b = b + c + a。
+     * <p>
+     * 当访问 A 链表的指针访问到链表尾部时，令它从链表 B 的头部开始访问链表 B；
+     * 同样地，当访问 B 链表的指针访问到链表尾部时，令它从链表 A 的头部开始访问链表 A。
+     * 这样就能控制访问 A 和 B 两个链表的指针能同时访问到交点。
+     */
+    private static Node getCommonNode2(Node head1, Node head2) {
+        Node p1 = head1, p2 = head2;
+        while (p1 != p2) {
+            p1 = (p1 == null) ? head2 : p1.next;
+            p2 = (p2 == null) ? head1 : p2.next;
+        }
+        return p1;
     }
 
     /* ---------------- 7. 判断单链表是否有环 -------------- */
