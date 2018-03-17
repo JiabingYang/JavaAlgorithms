@@ -94,37 +94,35 @@ public class MaxSubSum {
     }
 
     //return 0 when the sum is negative
-    private static int getMaxSubSumON(int[] a) {
-        int thisSum, maxSum, j;
-
-        thisSum = maxSum = 0;
-        for (j = 0; j < a.length; j++) {
-            thisSum += a[j];
-
-            if (thisSum > maxSum)
-                maxSum = thisSum;
-            else if (thisSum < 0)
-                thisSum = 0;
+    private static int getMaxSubSumON(int[] nums) {
+        int sum = 0, max = Integer.MIN_VALUE;
+        for (int num : nums) {
+            sum += num;
+            if (sum > max) {
+                max = sum;
+            } else if (sum < 0) {
+                sum = 0;
+            }
         }
-        return maxSum;
+        return max;
     }
 
     //return the sum when the sum is negative
-    private static int getMaxSubSumONAnother(int[] a) {
-        int thisSum, maxSum, j;
-
-        if (a.length == 0)
+    private static int getMaxSubSumONAnother(int[] nums) {
+        if (nums.length == 0)
             throw new RuntimeException("the length of the array can't be 0.");
-
-        thisSum = maxSum = a[0];
-        for (j = 0; j < a.length; j++) {
-            if (thisSum <= 0)
-                thisSum = a[j];
-            else
-                thisSum += a[j];
-            if (thisSum > maxSum)
-                maxSum = thisSum;
+        int sum = 0;
+        int max = Integer.MIN_VALUE;
+        for (int num : nums) {
+            if (sum <= 0) {
+                sum = num;
+            } else {
+                sum += num;
+            }
+            if (sum > max) {
+                max = sum;
+            }
         }
-        return maxSum;
+        return max;
     }
 }
