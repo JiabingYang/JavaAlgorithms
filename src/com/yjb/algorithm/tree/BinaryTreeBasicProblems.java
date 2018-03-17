@@ -8,8 +8,8 @@ import java.util.*;
  * https://www.programcreek.com
  * https://www.jianshu.com/p/0190985635eb
  * <p>
- * 1. 求二叉树的最大深度（树高）
- * 2. 求二叉树的最小深度
+ * 1. 求二叉树的深度（树高、深度）
+ * 2. 求二叉树的深度最小的叶子节点的深度
  * 3. 求二叉树中节点的个数
  * 4. 求二叉树中叶子节点的个数
  * 5. 求二叉树中第k层节点的个数
@@ -49,15 +49,15 @@ public class BinaryTreeBasicProblems {
         }
     }
 
-    /* ---------------- 1. 求二叉树的最大深度（树高） -------------- */
-    private static int getMaxDepth(TreeNode node) {
+    /* ---------------- 1. 求二叉树的深度（树高、深度） -------------- */
+    private static int getDepth(TreeNode node) {
         if (node == null) {
             return 0;
         }
-        return Math.max(getMaxDepth(node.left), getMaxDepth(node.right)) + 1;
+        return Math.max(getDepth(node.left), getDepth(node.right)) + 1;
     }
 
-    /* ---------------- 2. 求二叉树的最小深度 -------------- */
+    /* ---------------- 2. 求二叉树的深度最小的叶子节点的深度 -------------- */
 
     /**
      * 递归
@@ -169,26 +169,14 @@ public class BinaryTreeBasicProblems {
 
     /* ---------------- 6. 判断二叉树是否是平衡二叉树 -------------- */
 
-    /**
-     * https://www.programcreek.com/2013/02/leetcode-balanced-binary-tree-java/
-     */
     private static boolean isBalanced(TreeNode root) {
-        if (root == null)
+        if (root == null) {
             return true;
-        return getHeight(root) != -1;
-    }
-
-    private static int getHeight(TreeNode root) {
-        if (root == null)
-            return 0;
-        int left = getHeight(root.left);
-        int right = getHeight(root.right);
-        if (left == -1 || right == -1)
-            return -1;
-        if (Math.abs(left - right) > 1) {
-            return -1;
         }
-        return Math.max(left, right) + 1;
+        if (Math.abs(getDepth(root.left) - getDepth(root.right)) > 1) {
+            return false;
+        }
+        return isBalanced(root.left) && isBalanced(root.right);
     }
 
     /* ---------------- 7. 判断二叉树是否是完全二叉树 -------------- */
@@ -556,10 +544,10 @@ public class BinaryTreeBasicProblems {
         }
         int lh = 0, rh = 0;
         if (root.left != null) {
-            lh = getMaxDepth(root.left); // 左子树最远的叶子节点与root的距离
+            lh = getDepth(root.left); // 左子树最远的叶子节点与root的距离
         }
         if (root.right != null) {
-            rh = getMaxDepth(root.right); // 右子树最远的叶子节点与root的距离
+            rh = getDepth(root.right); // 右子树最远的叶子节点与root的距离
         }
         return Math.max(Math.max(getMaxDistance(root.left), getMaxDistance(root.right)), lh + rh);
     }
