@@ -1,7 +1,5 @@
 package com.yjb.algorithm.sort;
 
-import java.util.Arrays;
-
 public class Sort {
 
     public static void main(String[] args) {
@@ -185,13 +183,13 @@ public class Sort {
 
     private static void qSortBasic(int[] a, int l, int r) {
         if (l < r) {
-            int pivotIndex = getPivotIndex(a, l, r); //将数组一分为二
+            int pivotIndex = partition(a, l, r); //将数组一分为二
             qSortBasic(a, l, pivotIndex - 1);   //对低字段表进行递归排序
             qSortBasic(a, pivotIndex + 1, r); //对高字段表进行递归排序
         }
     }
 
-    private static int getPivotIndex(int[] a, int l, int r) {
+    private static int partition(int[] a, int l, int r) {
         int pivot = a[l]; //数组的第一个作为中轴
         while (l < r) {
             while (l < r && a[r] >= pivot) {
@@ -217,7 +215,7 @@ public class Sort {
 
     private static int qSelectBasic(int[] a, int k, int l, int r) {
         if (l < r) {
-            int pivotIndex = getPivotIndex(a, l, r); //将数组一分为二
+            int pivotIndex = partition(a, l, r); //将数组一分为二
             if (k <= pivotIndex) {
                 return qSelectBasic(a, k, l, pivotIndex - 1);
             } else if (k > pivotIndex + 1) {
