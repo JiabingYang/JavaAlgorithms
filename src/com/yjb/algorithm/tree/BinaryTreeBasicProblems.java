@@ -17,7 +17,7 @@ import java.util.*;
  * 7. 判断二叉树是否是完全二叉树
  * 8. 两个二叉树是否完全相同
  * 9. 两个二叉树是否互为镜像
- * 10. 翻转二叉树or镜像二叉树
+ * 10. 翻转二叉树or镜像二叉树（Leetcode: 27. Invert Binary Tree）
  * 11. 求两个二叉树的最低公共祖先节点
  * 12. 二叉树的前序遍历
  * 13. 二叉树的中序遍历
@@ -34,7 +34,6 @@ import java.util.*;
  * 24. 前序遍历和中序遍历构造二叉树
  * 25. 后序遍历和中序遍历构造二叉树
  * 26. Validate Binary Search Tree
- * 27. Invert Binary Tree
  */
 public class BinaryTreeBasicProblems {
 
@@ -103,9 +102,9 @@ public class BinaryTreeBasicProblems {
     }
 
     /**
-     * https://www.programcreek.com/2013/02/leetcode-minimum-depth-of-binary-tree-java/
-     * <p>
      * 我的解法
+     * <p>
+     * BFS
      */
     private static int getMinDepthBfs1(TreeNode root) {
         if (root == null) {
@@ -183,7 +182,8 @@ public class BinaryTreeBasicProblems {
 
     /**
      * 1. 当一个结点有右孩子，但是没有左孩子，直接返回false
-     * 2. 当一个节点有左孩子无右孩子或没有孩子，那么接下来要遍历的节点必须是叶子结点。（叶子结点左右孩子为空）
+     * 2. 当一个节点有左孩子无右孩子或没有孩子(总的来说就是没有右孩子)，
+     * 那么接下来要遍历的节点必须是叶子结点。（叶子结点左右孩子为空）
      */
     private static boolean isComplete(TreeNode root) {
         if (root == null) {
@@ -191,25 +191,23 @@ public class BinaryTreeBasicProblems {
         }
         Queue<TreeNode> queue = new LinkedList<>();
         queue.add(root);
-        boolean hasLeftNoRightOrNoChild = false;
+        boolean hasNoRight = false;
         while (!queue.isEmpty()) {
             TreeNode v = queue.remove();
-            if (hasLeftNoRightOrNoChild) {
+            if (hasNoRight) {
                 if (v.left != null || v.right != null) {
                     return false;
                 }
+            } else if (v.left != null && v.right != null) {
+                queue.add(v.left);
+                queue.add(v.right);
+            } else if (v.left != null) {
+                queue.add(v.left);
+                hasNoRight = true;
+            } else if (v.right != null) {
+                return false;
             } else {
-                if (v.left != null && v.right != null) {
-                    queue.add(v.left);
-                    queue.add(v.right);
-                } else if (v.left != null) {
-                    queue.add(v.left);
-                    hasLeftNoRightOrNoChild = true;
-                } else if (v.right != null) {
-                    return false;
-                } else {
-                    hasLeftNoRightOrNoChild = true;
-                }
+                hasNoRight = true;
             }
         }
         return true;
@@ -250,6 +248,32 @@ public class BinaryTreeBasicProblems {
         }
         root.left = mirror(root.right);
         root.right = mirror(root.left);
+        return root;
+    }
+
+    /**
+     * https://www.programcreek.com/2014/06/leetcode-invert-binary-tree-java/
+     * <p>
+     * 非递归
+     */
+    private static TreeNode mirror1(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode v = queue.poll();
+            if (v.left != null) {
+                queue.offer(v.left);
+            }
+            if (v.right != null) {
+                queue.offer(v.right);
+            }
+            TreeNode temp = v.left;
+            v.left = v.right;
+            v.right = temp;
+        }
         return root;
     }
 
@@ -353,7 +377,7 @@ public class BinaryTreeBasicProblems {
         }
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        while (!stack.isEmpty()) {
+        while (!stack.empty()) {
             TreeNode node = stack.peek();
             if (node.left != null) {
                 stack.push(node.left);
@@ -401,7 +425,7 @@ public class BinaryTreeBasicProblems {
         }
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        while (!stack.isEmpty()) {
+        while (!stack.empty()) {
             TreeNode node = stack.peek();
             if (node.left == null && node.right == null) {
                 result.add(stack.pop().value);
@@ -453,8 +477,8 @@ public class BinaryTreeBasicProblems {
         }
         // level and list
         HashMap<Integer, List<Integer>> map = new HashMap<>();
-        LinkedList<TreeNode> queue = new LinkedList<>();
-        LinkedList<Integer> level = new LinkedList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        Queue<Integer> level = new LinkedList<>();
         queue.offer(root);
         level.offer(0);
         int minLevel = 0;
@@ -505,7 +529,7 @@ public class BinaryTreeBasicProblems {
     /**
      * 给定两个值 k1 和 k2（k1 < k2）和一个二叉查找树的根节点。
      * 找到树中所有值在 k1 到 k2 范围内的节点。
-     * 即打印所有x (k1 <= x <= k2) 其中 x 是二叉查找树的中的节点值。
+     * 即打印所有x (k1 <= x <= k2) 其中 x 是二叉查找树中的节点值。
      * 返回所有升序的节点值。
      */
     private static List<Integer> searchRange(TreeNode root, int k1, int k2) {
@@ -561,7 +585,9 @@ public class BinaryTreeBasicProblems {
      * <p>
      * Analysis
      * <p>
-     * Let count[i] be the number of unique binary search trees for i. The number of trees are determined by the number of subtrees which have different root node. For example,
+     * Let count[i] be the number of unique binary search trees for i.
+     * The number of trees are determined by the number of subtrees which have different root node.
+     * For example,
      * <p>
      * i=0, count[0]=1 //empty tree
      * <p>
@@ -772,14 +798,14 @@ public class BinaryTreeBasicProblems {
         queue.add(new BNode(root, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
         while (!queue.isEmpty()) {
             BNode v = queue.poll();
-            if (v.node.value <= v.left || v.node.value >= v.right) {
+            if (v.node.value <= v.min || v.node.value >= v.max) {
                 return false;
             }
             if (v.node.left != null) {
-                queue.offer(new BNode(v.node.left, v.left, v.node.value));
+                queue.offer(new BNode(v.node.left, v.min, v.node.value));
             }
             if (v.node.right != null) {
-                queue.offer(new BNode(v.node.right, v.node.value, v.right));
+                queue.offer(new BNode(v.node.right, v.node.value, v.max));
             }
         }
         return true;
@@ -788,65 +814,13 @@ public class BinaryTreeBasicProblems {
     //define a BNode class with TreeNode and it's boundaries
     private static class BNode {
         TreeNode node;
-        double left;
-        double right;
+        double min;
+        double max;
 
-        BNode(TreeNode node, double left, double right) {
+        BNode(TreeNode node, double min, double max) {
             this.node = node;
-            this.left = left;
-            this.right = right;
+            this.min = min;
+            this.max = max;
         }
-    }
-
-    /* ---------------- 27. Invert Binary Tree -------------- */
-
-    /**
-     * https://www.programcreek.com/2014/06/leetcode-invert-binary-tree-java/
-     * <p>
-     * 递归
-     */
-    private static TreeNode invertTree(TreeNode root) {
-        if (root != null) {
-            invertTreeHelper(root);
-        }
-        return root;
-    }
-
-    private static void invertTreeHelper(TreeNode root) {
-        TreeNode temp = root.left;
-        root.left = root.right;
-        root.right = temp;
-        if (root.left != null) {
-            invertTreeHelper(root.left);
-        }
-        if (root.right != null) {
-            invertTreeHelper(root.right);
-        }
-    }
-
-    /**
-     * https://www.programcreek.com/2014/06/leetcode-invert-binary-tree-java/
-     * <p>
-     * 非递归
-     */
-    private static TreeNode invertTree1(TreeNode root) {
-        if (root == null) {
-            return null;
-        }
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(root);
-        while (!queue.isEmpty()) {
-            TreeNode v = queue.poll();
-            if (v.left != null) {
-                queue.offer(v.left);
-            }
-            if (v.right != null) {
-                queue.offer(v.right);
-            }
-            TreeNode temp = v.left;
-            v.left = v.right;
-            v.right = temp;
-        }
-        return root;
     }
 }
