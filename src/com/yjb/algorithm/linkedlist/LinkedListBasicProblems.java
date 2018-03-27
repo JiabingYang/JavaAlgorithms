@@ -14,19 +14,19 @@ import java.util.Stack;
  * 2. 查找单链表倒数第k个元素
  * 3. 获取单链表的中间元素
  * 4. 两个有序单链表合并(剑指offer：No25MergeSortedLists)
- * 5. 判断两个单链表是否相交
- * 6. 获取两个单链表相交的结点
+ * 5. 判断两个单链表是否相交（无环）
+ * 6. 获取两个单链表相交的节点（无环）
  * 7. 判断单链表是否有环
- * 8. 判断有环单链表中环的长度
- * 9. 获取单链表中，环的起始结点(剑指offer：No23EntryNodeInListLoop)
- * 10. 删除单链表中指定结点(剑指offer: No18aDeleteNodeInList)
+ * 8. 求环长
+ * 9. 求环起点(剑指offer：No23EntryNodeInListLoop)
+ * 10. 删除单链表中指定节点(剑指offer: No18aDeleteNodeInList)
  * 11. 反转链表(剑指offer: No24ReverseList)
  * 12. 单链表归并排序
- * 13. 反序链表求和(LeetCode: 2. Add Two Numbers)
- * 14. 删除链表倒数第n个节点(不考虑异常情况，LeetCode: 19. Remove Nth Node From End of List)
- * 15. 删除链表中重复的元素(剑指offer: No18bDeleteDuplicatedNode)
- * 16. 删除链表中重复的元素(重复元素只保留一个)
- * 17. 链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd)
+ * 13. 反序链表求和(Leetcode: 2. Add Two Numbers)
+ * 14. 删除链表中重复的元素(剑指offer: No18bDeleteDuplicatedNode)
+ * 15. 删除链表中重复的元素(重复元素只保留一个)
+ * 16. 链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd)
+ * 17. 删除链表倒数第n个节点(不考虑异常情况，LeetCode: 19. Remove Nth Node From End of List)
  * 18. 删除链表倒数第n个节点(考虑异常情况)
  */
 public class LinkedListBasicProblems {
@@ -38,22 +38,13 @@ public class LinkedListBasicProblems {
 
         Node(int data) {
             this.data = data;
-            next = null;
         }
     }
 
     /* ---------------- 1. 单链表倒序输出 -------------- */
-    // 单链表的倒序输出即从链表表尾逐个输出到表头。
-    // 因为单链表的指针域是单向的，所以要找到表尾的话，需要遍历整个链表。
-    // 这个算法可以有两种实现：1、迭代实现，2、递归实现。
 
     /**
-     * 迭代实现
-     * <p>
-     * 迭代实现关键是考虑倒序输出正好符合栈的先进后出的特点——先遍历到的元素最后输出。
-     * 这样，可以遍历一遍，将数据存储在栈中，然后由栈逐个pop即可。
-     *
-     * @param head 待倒序输出的链表
+     * 迭代
      */
     private static void printListReverse1(Node head) {
         Stack<Integer> stack = new Stack<>();
@@ -67,12 +58,7 @@ public class LinkedListBasicProblems {
     }
 
     /**
-     * 递归实现
-     * <p>
-     * 递归实现即递归地往下找，直到找到最后一个元素，再回溯输出即可。
-     * 但是，递归实现有个很大的缺陷，就是当链表元素特别多的时候，递归层次太深，容易造成栈溢出。
-     *
-     * @param head 待倒序输出的链表
+     * 递归
      */
     private static void printListReverse2(Node head) {
         if (head != null) {
@@ -82,50 +68,35 @@ public class LinkedListBasicProblems {
     }
 
     /* ---------------- 2. 查找单链表倒数第k个元素 -------------- */
-    // 查找单链表中倒数第k个元素，仍然有两种实现：1、通过获取链表的长度实现。2、通过两个指针实现。
 
     /**
-     * 通过获取链表的长度的实现
-     * <p>
-     * 第1次遍历，得到链表长度 length。然后第2次遍历，找到第length-k个元素就是了。这种方法效率较低。
-     *
-     * @param head 待查找的链表
-     * @param k    倒数第k个元素
-     * @return Node 返回倒数第k个结点。若k=0或链表为null，则返回null，若k大于链表长度，则抛RuntimeException异常
+     * 第1次遍历，得到链表长度 length。然后第2次遍历，找到第length-k个元素。效率较低。
      */
     private static Node getKthNode1(Node head, int k) {
         if (head == null || k == 0) {
             return null;
         }
-        int length = 0;
-        Node ptr = head;
-        while (ptr != null) {
-            length++;
-            ptr = ptr.next;
+        int len = 0;
+        Node p = head;
+        while (p != null) {
+            len++;
+            p = p.next;
         }
-        //这里做一步异常处理
-        if (k > length) {
+        if (k > len) { // 异常处理
             throw new RuntimeException("exceed length of linked list");
         }
-        ptr = head;
-        int count = length - k;
+        p = head;
+        int count = len - k;
         while (count > 0) {
-            ptr = ptr.next;
+            p = p.next;
             count--;
         }
-        return ptr;
+        return p;
     }
 
     /**
-     * 通过两个指针实现
-     * <p>
-     * 如果不允许遍历整个链表，或者要提高效率，就采用这种思路：
-     * 定义两个指针，pFront先指向第k个元素，pBack指向链表的head
-     * 两个指针同时移动遍历，当pFront遍历到链表尾部之后，pBack正好是指向倒数第k个元素。
-     *
-     * @param head 待查找的结点
-     * @param k    倒数第k个元素
-     * @return Node 返回倒数第k个结点。若k=0或链表为null，则返回null，若k大于链表长度，则抛RuntimeException异常
+     * pFront先指向第k个元素，pBack指向链表的head
+     * 两个指针同时移动，当pFront到null时，pBack指向倒数第k个元素。
      */
     private static Node getReKthNode2(Node head, int k) {
         if (head == null || k == 0) {
@@ -135,7 +106,7 @@ public class LinkedListBasicProblems {
         Node pFront = head;
         while (k > 1) {
             pFront = pFront.next;
-            if (pFront == null) {
+            if (pFront == null) { // 异常处理
                 throw new RuntimeException("exceed length of linked list");
             }
             k--;
@@ -152,10 +123,7 @@ public class LinkedListBasicProblems {
     /* ---------------- 3. 获取单链表的中间元素 -------------- */
 
     /**
-     * 思路：仍然是两个指针，只是pFront一次走2步，pBack一次走1步。直到pFront走到最后一个结点。
-     *
-     * @param head 待查找的链表
-     * @return Node 链表的中间结点。 若链表为null，则返回null
+     * pFront一次走2步，pBack一次走1步。直到pFront走到最后一个节点。
      */
     private static Node getMiddleNode(Node head) {
         Node pFront = head;
@@ -168,19 +136,11 @@ public class LinkedListBasicProblems {
     }
 
     /* ---------------- 4. 两个有序单链表合并(剑指offer：No25MergeSortedLists) -------------- */
-    // 两个单链表head1和head2都各自有序，要求将其合并，得到的结果依然有序。
-    // 此问题仍然有两种实现：1、归并排序的思想合并； 2、递归合并
 
     /**
-     * 归并排序的思想合并
-     * <p>
-     * 思想：用归并排序merge方法的思想。
-     *
-     * @param head1 第1个有序链表
-     * @param head2 第2个有序链表
-     * @return Node 归并之后的结果链表 若两个链表都为null，则返回null
+     * 归并
      */
-    private static Node mergeSortedLinkedlist1(Node head1, Node head2) {
+    private static Node mergeSortedLists1(Node head1, Node head2) {
         if (head1 == null) {
             return head2;
         }
@@ -188,11 +148,11 @@ public class LinkedListBasicProblems {
             return head1;
         }
 
-        Node dummyHead = new Node(0);
+        Node dummy = new Node(0);
 
         Node p1 = head1;
         Node p2 = head2;
-        Node p = dummyHead;
+        Node p = dummy;
 
         while (p1 != null && p2 != null) {
             if (p1.data < p2.data) {
@@ -212,20 +172,13 @@ public class LinkedListBasicProblems {
             p.next = p2;
         }
 
-        return dummyHead.next;
+        return dummy.next;
     }
 
     /**
-     * 递归合并
-     * <p>
-     * 用递归的方法代码更简洁，也可读性也很强。
-     * 但是，两个链表比较长的时候，递归层次也可能会很深，结果造成栈溢出。
-     *
-     * @param head1 第1个有序链表
-     * @param head2 第2个有序链表
-     * @return Node 归并之后的结果链表 ，若两个链表都为null，则返回null
+     * 递归
      */
-    private static Node mergeSortedLinkedlist2(Node head1, Node head2) {
+    private static Node mergeSortedLists2(Node head1, Node head2) {
         if (head1 == null) {
             return head2;
         }
@@ -236,27 +189,20 @@ public class LinkedListBasicProblems {
         Node head;
         if (head1.data < head2.data) {
             head = head1;
-            head.next = mergeSortedLinkedlist2(head1.next, head2);
+            head.next = mergeSortedLists2(head1.next, head2);
         } else {
             head = head2;
-            head.next = mergeSortedLinkedlist2(head1, head2.next);
+            head.next = mergeSortedLists2(head1, head2.next);
         }
         return head;
     }
 
-    /* ---------------- 5. 判断两个单链表是否相交 -------------- */
-    // 如果两个链表相交于某一节点，那么在这个相交节点之后的所有节点都是两个链表所共有的。
-    // 相当于“Y”字型的两个链表。
+    /* ---------------- 5. 判断两个单链表是否相交（无环） -------------- */
 
     /**
-     * 思路：只需要判断两个链表的最后一个节点是否相同即可。
-     * 这样，只需要比较一次，但两个链表都遍历到尾部，时间复杂度为O(len1+len2)
-     *
-     * @param head1 链表1
-     * @param head2 链表2
-     * @return boolean。 true：两个链表相交； false：两个链表不相交
+     * 判断两个链表的最后一个节点是否相同
      */
-    private static boolean isLinkedListIntersect(Node head1, Node head2) {
+    private static boolean isLinkedListsIntersect(Node head1, Node head2) {
         if (head1 == null || head2 == null) {
             return false;
         }
@@ -269,18 +215,11 @@ public class LinkedListBasicProblems {
         return head1 == head2;
     }
 
-    /* ---------------- 6. 获取两个单链表相交的结点 -------------- */
-    // 若两个链表相交，则获取相交处的结点。 即“Y”的交点
+    /* ---------------- 6. 获取两个单链表相交的节点（无环） -------------- */
 
     /**
-     * 思路：如果有交点，则两个链表从交点到尾部一定是相同的元素，而且这段距离小于或等于最短的链表。
-     * <p>
-     * 可以定义两个指针pFront和pBack，pBack指向较短链表的首部，pFront指向较长链表的lenLong- lenShort位置
-     * 两个指针同时移动，直到找到相同结点。
-     *
-     * @param head1 链表1
-     * @param head2 链表2
-     * @return Node 返回两个链表相交的结点。若没有相交，则返回null
+     * pBack指向较短链表的首部，pFront指向较长链表的lenLong- lenShort位置
+     * 两个指针同时移动，直到找到相同节点。
      */
     public static Node getCommonNode1(Node head1, Node head2) {
         if (head1 == null || head2 == null) {
@@ -354,10 +293,10 @@ public class LinkedListBasicProblems {
     }
 
     /* ---------------- 7. 判断单链表是否有环 -------------- */
-    // 如果链表有环，单用一个指针是永远无法遍历到尾部的。那么，判断是否有环的思路，仍然是两个指针。
 
     /**
-     * 如果快的指针走到NULL，说明无环；而fast==slow相遇，则证明肯定存在环。
+     * 快指针走到null，说明无环
+     * fast==slow相遇，说明有环
      */
     private static boolean hasCycle(Node head) {
         Node slow = head;
@@ -372,12 +311,10 @@ public class LinkedListBasicProblems {
         return false;
     }
 
-    /* ---------------- 8. 判断有环单链表中，环的长度 -------------- */
+    /* ---------------- 8. 求环长 -------------- */
 
     /**
      * https://www.cnblogs.com/hiddenfox/p/3408931.html
-     * <p>
-     * 方法一（网上都是这个答案）：
      * <p>
      * 第一次相遇后，让slow,fast继续走，记录到下次相遇时循环了几次。
      * 因为当fast第二次到达相遇点时，fast走了一圈，slow走了半圈，
@@ -407,8 +344,6 @@ public class LinkedListBasicProblems {
     /**
      * https://www.cnblogs.com/hiddenfox/p/3408931.html
      * <p>
-     * 方法二：
-     * <p>
      * 第一次相遇后，让fast停着不走了，slow继续走，记录到下次相遇时循环了几次。
      */
     private static int getCycleLen2(Node head) {
@@ -433,18 +368,15 @@ public class LinkedListBasicProblems {
         return count;
     }
 
-    /* ---------------- 9. 获取单链表中，环的起始结点 -------------- */
+    /* ---------------- 9. 求环起点 -------------- */
 
     /**
      * https://www.cnblogs.com/hiddenfox/p/3408931.html
      * <p>
      * 上面链接中关于这道题的解释是错的，应该要推公式的。
      * <p>
-     * 当两个结点相遇的时候，将slow再重新指向head，slow和fast一起以slow的速度往后移动，
-     * 当再次相遇的时候，该结点就是环的起点。
-     *
-     * @param head 待处理的链表
-     * @return Node 环的起始结点。 若没有环，则返回null
+     * 当两个节点相遇的时候，将slow再重新指向head，slow和fast一起以slow的速度往后移动，
+     * 当再次相遇的时候，该节点就是环的起点。
      */
     private static Node detectCycle1(Node head) {
         Node slow = head;
@@ -462,7 +394,7 @@ public class LinkedListBasicProblems {
         }
 
         slow = head; //slow从头开始走，
-        while (slow != fast) { //二者相遇在环的起始结点，则退出
+        while (slow != fast) { //二者相遇在环的起始节点，则退出
             slow = slow.next;
             fast = fast.next;
         }
@@ -470,14 +402,9 @@ public class LinkedListBasicProblems {
     }
 
     /**
-     * 配合HashSet一次遍历
+     * HashSet + 一次遍历
      * <p>
-     * 思想：
-     * 可以在遍历的时候，将链表结点放入HashSet中，当遍历时发现有此元素，则该结点就是环的起始结点。
-     * 这种方法很简洁，但是当结点比较多的时候，空间开销太大。
-     *
-     * @param head 待处理的链表
-     * @return Node 环的起始结点。 若没有环，则返回null
+     * 空间开销大
      */
     private static Node detectCycle2(Node head) {
         if (head == null) {
@@ -495,23 +422,14 @@ public class LinkedListBasicProblems {
         return null;
     }
 
-    /* ---------------- 10. 删除单链表中指定结点(剑指offer: No18aDeleteNodeInList) -------------- */
-    // 这个问题有个特殊要求，就是要求时间复杂度O(1)
-    // 常规的思路：对于这样一段链表：n0 -> n1 -> n2 -> n3 -> n4 如果要删除结点n2，可以让n1指向n3。
-    // 然后释放n2。这样的话需要找到结点n1，时间复杂度为O(n)
+    /* ---------------- 10. 删除单链表中指定节点(剑指offer: No18aDeleteNodeInList) -------------- */
 
     /**
-     * 思想：对于单链表，可以将n3复制到n2，然后删除n3即可。
-     * 这样的方法在java中，如果是删除链表最后一个元素，仍然需要找前面的元素。
+     * 将toBeDeleted的下一个节点复制到toBeDeleted，然后删除toBeDeleted的下一个节点。
+     * 如果是删除链表最后一个元素，仍需找toBeDeleted的上一个节点。
      * <p>
      * Note:
-     * 1. 这个方法和文本上的不一样，书上的没有返回值，这个因为JAVA引用传递的原因，
-     * 如果删除的结点是头结点，如果不采用返回值的方式，那么头结点永远删除不了
-     * 2. 输入的待删除结点必须是待链表中的结点，否则会引起错误，这个条件由用户进行保证
-     *
-     * @param head        链表的表头
-     * @param toBeDeleted 待删除的结点
-     * @return 删除后的头结点
+     * 输入的待删除节点必须是待链表中的节点，否则会出错
      */
     private static Node deleteNode(Node head, Node toBeDeleted) {
         if (head == null || toBeDeleted == null) {
@@ -573,10 +491,10 @@ public class LinkedListBasicProblems {
         Node right = sortList(mid.next);
         mid.next = null;
         Node left = sortList(head);
-        return mergeSortedLinkedlist1(left, right);
+        return mergeSortedLists1(left, right);
     }
 
-    /* ---------------- 13. 反序链表求和(LeetCode: No2AddTwoNumbers) -------------- */
+    /* ---------------- 13. 反序链表求和(Leetcode: No2AddTwoNumbers) -------------- */
     private static Node addTwoNumbers(Node l1, Node l2) {
         if (l1 == null) {
             return l2;
@@ -606,7 +524,66 @@ public class LinkedListBasicProblems {
         return dummy.next;
     }
 
-    /* ---------------- 14. 删除链表倒数第n个节点(不考虑异常情况，Leetcode: 19. Remove Nth Node From End of List) -------------- */
+    /* ---------------- 14. 删除链表中重复的元素(剑指offer No18bDeleteDuplicatedNode) -------------- */
+    private static Node deleteDuplication(Node head) {
+        if (head == null) {
+            return null;
+        }
+        Node dummy = new Node(0);
+        dummy.next = head;
+        Node pre = dummy;
+        while (pre.next != null && pre.next.next != null) {
+            Node p = pre.next;
+            if (p.data != p.next.data) {
+                pre = pre.next;
+                continue;
+            }
+            int val = p.data;
+            do {
+                p = p.next;
+            } while (p != null && p.data == val);
+            pre.next = p;
+        }
+        return dummy.next;
+    }
+
+    /* ---------------- 15. 删除链表中重复的元素(重复元素只保留一个) -------------- */
+    private static Node deleteDuplicationReserve(Node head) {
+        if (head == null) {
+            return null;
+        }
+        Node p = head;
+        while (p.next != null) {
+            if (p.data == p.next.data) {
+                p.next = p.next.next;
+            } else {
+                p = p.next;
+            }
+        }
+        return head;
+    }
+
+    /* ---------------- 16. 链表倒数第k个节点(考虑异常情况，剑指offer: No22KthNodeFromEnd) -------------- */
+    private static Node findKthToTail(Node head, int k) {
+        if (head == null || k == 0) {
+            return null;
+        }
+        Node fast = head;
+        for (int i = 0; i < k - 1; i++) {
+            if (fast.next == null) {
+                return null;
+            }
+            fast = fast.next;
+        }
+        Node slow = head;
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+
+    /* ---------------- 17. 删除链表倒数第n个节点(不考虑异常情况，Leetcode: 19. Remove Nth Node From End of List) -------------- */
 
     /**
      * https://www.programcreek.com/2014/05/leetcode-remove-nth-node-from-end-of-list-java/
@@ -706,65 +683,6 @@ public class LinkedListBasicProblems {
         if (level == n + 1)    //找到了父亲
             node.next = node.next.next;
         return level;
-    }
-
-    /* ---------------- 15. 删除链表中重复的元素(剑指offer No18bDeleteDuplicatedNode) -------------- */
-    private static Node deleteDuplication(Node head) {
-        if (head == null) {
-            return null;
-        }
-        Node dummy = new Node(0);
-        dummy.next = head;
-        Node pre = dummy;
-        while (pre.next != null && pre.next.next != null) {
-            Node p = pre.next;
-            if (p.data != p.next.data) {
-                pre = pre.next;
-                continue;
-            }
-            int val = p.data;
-            do {
-                p = p.next;
-            } while (p != null && p.data == val);
-            pre.next = p;
-        }
-        return dummy.next;
-    }
-
-    /* ---------------- 16. 删除链表中重复的元素(重复元素只保留一个) -------------- */
-    private static Node deleteDuplicationReserve(Node head) {
-        if (head == null) {
-            return null;
-        }
-        Node p = head;
-        while (p.next != null) {
-            if (p.data == p.next.data) {
-                p.next = p.next.next;
-            } else {
-                p = p.next;
-            }
-        }
-        return head;
-    }
-
-    /* ---------------- 17. 链表中倒数第k个结点(考虑异常情况，剑指offer: No22KthNodeFromEnd) -------------- */
-    private static Node findKthToTail(Node head, int k) {
-        if (head == null || k == 0) {
-            return null;
-        }
-        Node fast = head;
-        for (int i = 0; i < k - 1; i++) {
-            if (fast.next == null) {
-                return null;
-            }
-            fast = fast.next;
-        }
-        Node slow = head;
-        while (fast.next != null) {
-            slow = slow.next;
-            fast = fast.next;
-        }
-        return slow;
     }
 
     /* ---------------- 18. 删除链表倒数第n个节点(考虑异常情况) -------------- */
