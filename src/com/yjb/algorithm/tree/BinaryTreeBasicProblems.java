@@ -716,7 +716,7 @@ public class BinaryTreeBasicProblems {
 
     /* ---------------- 24. 前序遍历和中序遍历构造二叉树 -------------- */
     private static TreeNode buildTree(int[] preOrder, int[] inOrder) {
-        return construct(preOrder, inOrder, 0, preOrder.length - 1, 0, inOrder.length);
+        return construct(preOrder, inOrder, 0, preOrder.length - 1, 0, inOrder.length - 1);
     }
 
     private static TreeNode construct(int[] preOrder, int[] inOrder, int preStart,
@@ -738,7 +738,7 @@ public class BinaryTreeBasicProblems {
 
     /* ---------------- 25. 后序遍历和中序遍历构造二叉树 -------------- */
     private static TreeNode buildTree1(int[] postOrder, int[] inOrder) {
-        return construct(postOrder, inOrder, 0, postOrder.length - 1, 0, inOrder.length);
+        return construct1(postOrder, inOrder, 0, postOrder.length - 1, 0, inOrder.length - 1);
     }
 
     private static TreeNode construct1(int[] postOrder, int[] inOrder, int postStart,
